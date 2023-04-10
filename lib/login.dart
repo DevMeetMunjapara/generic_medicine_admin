@@ -68,85 +68,105 @@ class _LoginState extends State<Login> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Login",
+                        "Admin Login",
                         style: TextStyle(
                             fontSize: 30.h,
                             color: Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
-                        height: 5.h,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "Don’t have an account? ",
-                            style: TextStyle(
-                                fontSize: 22.h,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          InkWell(
-                            onTap: () {},
-                            child: Text(
-                              "Register",
-                              style: TextStyle(
-                                  fontSize: 22.h,
-                                  color: AppComponent.Green,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
                         height: 20.h,
                       ),
                       Form(
                           key: _form,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            controller: mobileNumber,
-                            cursorColor: AppComponent.Green,
-                            decoration: InputDecoration(
-                                prefixIcon: Container(
-                                  //color: Colors.amber,
-                                  width: 10.h,
-                                  child: Center(
-                                    child: Text(
-                                      "+91",
-                                      style: TextStyle(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                controller: mobileNumber,
+                                cursorColor: AppComponent.Blue,
+                                decoration: InputDecoration(
+                                    prefixIcon: Container(
+                                      width: 10.h,
+                                      child: Center(
+                                          child: SvgPicture.asset(
+                                              AppComponent.email)),
                                     ),
-                                  ),
-                                ),
-                                hintText: "Enter 10 digit mobile number",
-                                hintStyle: TextStyle(fontSize: 20.sp),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide: BorderSide(
-                                        color: Color.fromARGB(
-                                            255, 235, 235, 235))),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    borderSide:
-                                        BorderSide(color: AppComponent.Green))),
-                            validator: (value) {
-                              if (value == "") {
-                                return "Enter Mobile Number";
-                              }
-                              if (value!.length != 10) {
-                                return 'Only 10 digit number valid';
-                              }
-                            },
+                                    hintText: "Enter you Email address",
+                                    hintStyle: TextStyle(
+                                        fontSize: 20.sp,
+                                        color:
+                                            Color.fromARGB(255, 201, 201, 201)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 235, 235, 235))),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: BorderSide(
+                                            color: AppComponent.Blue))),
+                                validator: (value) {
+                                  if (value == "") {
+                                    return "Enter Mobile Number";
+                                  }
+                                  if (value!.length != 10) {
+                                    return 'Only 10 digit number valid';
+                                  }
+                                },
+                              ),
+                              SizedBox(
+                                height: 10.h,
+                              ),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                controller: mobileNumber,
+                                cursorColor: AppComponent.Blue,
+                                decoration: InputDecoration(
+                                    suffixIcon: Container(
+                                      width: 10.h,
+                                      child: Center(
+                                          child: SvgPicture.asset(
+                                              AppComponent.eye)),
+                                    ),
+                                    prefixIcon: Container(
+                                      width: 10.h,
+                                      child: Center(
+                                          child: SvgPicture.asset(
+                                              AppComponent.password)),
+                                    ),
+                                    hintText: "Enter 10 digit mobile number",
+                                    hintStyle: TextStyle(
+                                        fontSize: 20.sp,
+                                        color:
+                                            Color.fromARGB(255, 201, 201, 201)),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 235, 235, 235))),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                        borderSide: BorderSide(
+                                            color: AppComponent.Blue))),
+                                validator: (value) {
+                                  if (value == "") {
+                                    return "Enter Mobile Number";
+                                  }
+                                  if (value!.length != 10) {
+                                    return 'Only 10 digit number valid';
+                                  }
+                                },
+                              ),
+                            ],
                           )),
                       SizedBox(
                         height: 20.h,
                       ),
                       FullButton(
-                        title: "Get verification code",
+                        title: "Login Now",
                         loading: loading,
+                        mycolors: AppComponent.Blue,
                         onPressed: () async {
                           bool result =
                               await InternetConnectionChecker().hasConnection;
@@ -155,45 +175,10 @@ class _LoginState extends State<Login> {
                             if (_form.currentState!.validate()) {}
                           }
                         },
-                        mycolors: AppComponent.Green,
                       ),
                       SizedBox(
                         height: 20.h,
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          "By signing in you agree to our",
-                          style: TextStyle(
-                              fontSize: 18.sp,
-                              color: Color.fromARGB(255, 126, 126, 126)),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "terms & conditions ",
-                            style: TextStyle(
-                                fontSize: 18.sp,
-                                color: AppComponent.NevyBlue,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            "and ",
-                            style: TextStyle(
-                                fontSize: 18.sp,
-                                color: Color.fromARGB(255, 126, 126, 126)),
-                          ),
-                          Text(
-                            "Privacy policy",
-                            style: TextStyle(
-                                fontSize: 18.sp,
-                                color: AppComponent.NevyBlue,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),

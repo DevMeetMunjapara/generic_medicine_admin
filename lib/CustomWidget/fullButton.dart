@@ -37,7 +37,8 @@ class FullButton extends StatelessWidget {
                 )
               : Text(
                   title,
-                  style: TextStyle(fontSize: 20.sp),
+                  style:
+                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w400),
                 ),
         ),
       ),
