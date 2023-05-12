@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:generic_medicine_admin/CustomWidget/AppComponent.dart';
 import 'package:generic_medicine_admin/CustomWidget/fullButton.dart';
+import 'package:generic_medicine_admin/home.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -18,7 +20,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   GlobalKey<FormState> _form = GlobalKey<FormState>();
-  TextEditingController mobileNumber = TextEditingController();
+  TextEditingController _email = TextEditingController();
+  TextEditingController _password = TextEditingController();
   bool sendOTP = true;
   bool loading = false;
 
@@ -55,7 +58,7 @@ class _LoginState extends State<Login> {
                         height: 390.h,
                         child: SvgPicture.asset(
                           AppComponent.login,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         ))
                   ],
                 ),
@@ -68,7 +71,7 @@ class _LoginState extends State<Login> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Admin Login",
+                        "Login",
                         style: TextStyle(
                             fontSize: 30.h,
                             color: Colors.black,
@@ -82,8 +85,8 @@ class _LoginState extends State<Login> {
                           child: Column(
                             children: [
                               TextFormField(
-                                keyboardType: TextInputType.number,
-                                controller: mobileNumber,
+                                keyboardType: TextInputType.emailAddress,
+                                controller: _email,
                                 cursorColor: AppComponent.Blue,
                                 decoration: InputDecoration(
                                     prefixIcon: Container(
@@ -106,21 +109,13 @@ class _LoginState extends State<Login> {
                                         borderRadius: BorderRadius.circular(4),
                                         borderSide: BorderSide(
                                             color: AppComponent.Blue))),
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "Enter Mobile Number";
-                                  }
-                                  if (value!.length != 10) {
-                                    return 'Only 10 digit number valid';
-                                  }
-                                },
                               ),
                               SizedBox(
                                 height: 10.h,
                               ),
                               TextFormField(
                                 keyboardType: TextInputType.number,
-                                controller: mobileNumber,
+                                controller: _password,
                                 cursorColor: AppComponent.Blue,
                                 decoration: InputDecoration(
                                     suffixIcon: Container(
@@ -135,7 +130,7 @@ class _LoginState extends State<Login> {
                                           child: SvgPicture.asset(
                                               AppComponent.password)),
                                     ),
-                                    hintText: "Enter 10 digit mobile number",
+                                    hintText: "Enter Password  ",
                                     hintStyle: TextStyle(
                                         fontSize: 20.sp,
                                         color:
@@ -149,35 +144,46 @@ class _LoginState extends State<Login> {
                                         borderRadius: BorderRadius.circular(4),
                                         borderSide: BorderSide(
                                             color: AppComponent.Blue))),
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "Enter Mobile Number";
-                                  }
-                                  if (value!.length != 10) {
-                                    return 'Only 10 digit number valid';
-                                  }
-                                },
                               ),
                             ],
                           )),
                       SizedBox(
                         height: 20.h,
                       ),
-                      FullButton(
-                        title: "Login Now",
-                        loading: loading,
-                        mycolors: AppComponent.Blue,
-                        onPressed: () async {
-                          bool result =
-                              await InternetConnectionChecker().hasConnection;
-                          if (result == true) {
-                            print('---------YAY! Free cute dog pics!');
-                            if (_form.currentState!.validate()) {}
-                          }
-                        },
-                      ),
                       SizedBox(
-                        height: 20.h,
+                        width: double.infinity,
+                        height: 50.h,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromARGB(255, 0, 56, 101),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(2.85))),
+                          onPressed: () async {
+                            await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: _email.text,
+                                    password: _password.text)
+                                .then((value) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Home()));
+                            });
+                          },
+                          child: Center(
+                            child: loading
+                                ? CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    "Login Now",
+                                    style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

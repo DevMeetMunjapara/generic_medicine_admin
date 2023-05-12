@@ -31,13 +31,15 @@ class _LogoState extends State<Logo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppComponent.Yellow,
-      body: Center(
-          child: SvgPicture.asset(
-        AppComponent.introLogo,
-        width: 180.sp,
-      )),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppComponent.Yellow,
+        body: Center(
+            child: SvgPicture.asset(
+          AppComponent.introLogo,
+          width: 180.sp,
+        )),
+      ),
     );
   }
 }
