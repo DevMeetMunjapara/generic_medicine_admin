@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -6,31 +7,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:generic_medicine_admin/CustomWidget/AppComponent.dart';
 import 'package:generic_medicine_admin/CustomWidget/appbar.dart';
-import 'package:generic_medicine_admin/franchise.dart';
-import 'package:generic_medicine_admin/orderstatus.dart';
+import 'package:generic_medicine_admin/franchisePartner.dart';
+import 'package:generic_medicine_admin/home.dart';
 import 'package:intl/intl.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Franchise extends StatefulWidget {
+  const Franchise({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Franchise> createState() => _FranchiseState();
 }
 
-class _HomeState extends State<Home> {
-  var db = FirebaseFirestore.instance.collection("allOrder");
-  String? formattedDate;
-  TextEditingController _number = TextEditingController(text: "10");
-  int isArrow = 1;
+class _FranchiseState extends State<Franchise> {
+  var db = FirebaseFirestore.instance.collection("allpartner");
   String itemSelected = "All";
-  List docList = <int>[];
-  List loops = [];
-  var mysnapshot;
+  String? formattedDate;
 
   @override
   Widget build(BuildContext context) {
+    print("----------$db");
+
     return Scaffold(
-      backgroundColor: AppComponent.Yellow,
       appBar: MyAppBar().myappwithLogo(context),
       body: Column(
         children: [
@@ -40,7 +37,7 @@ class _HomeState extends State<Home> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Detailed Report",
+                  "Franchise Partner Detailed",
                   style: TextStyle(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
@@ -50,13 +47,13 @@ class _HomeState extends State<Home> {
                   height: 5.h,
                 ),
                 Text(
-                  "These orders have been confirm during Period date.",
+                  "Franchise Partner Applied Reoprts",
                   style: TextStyle(
                       fontSize: 16.sp,
                       color: Color.fromARGB(255, 117, 122, 120)),
                 ),
                 SizedBox(
-                  height: 10.h,
+                  height: 15.h,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +66,7 @@ class _HomeState extends State<Home> {
                           "Select Date",
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
-                              fontSize: 18.sp,
+                              fontSize: 16.sp,
                               color: Colors.black),
                         ),
                         SizedBox(
@@ -82,7 +79,6 @@ class _HomeState extends State<Home> {
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime(2021),
                                 lastDate: DateTime(2024));
-
                             setState(() {
                               formattedDate =
                                   DateFormat('dd/MM/yyyy').format(dateTime!);
@@ -158,25 +154,14 @@ class _HomeState extends State<Home> {
                                     child: Text("All"),
                                   ),
                                   DropdownMenuItem(
-                                    value: "Pending",
-                                    child: Text("Pending"),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: "Approved",
-                                    child: Text("Approved"),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: "Delivery",
-                                    child: Text("Delivery"),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: "Reject",
-                                    child: Text("Reject"),
+                                    value: "Not Read",
+                                    child: Text("Not Read"),
                                   ),
                                 ],
                                 onChanged: (value) {
                                   setState(() {
                                     itemSelected = value!;
+                                    print(itemSelected);
                                   });
                                 },
                               ),
@@ -215,150 +200,56 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w),
-            width: double.infinity,
-            height: 55.h,
-            color: Color.fromARGB(255, 251, 250, 250),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 0.1.sw,
-                  height: double.infinity,
-                  child: Center(
-                    child: Text(
-                      "No.",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 30.w,
-                ),
-                Container(
-                  width: 0.2.sw,
-                  height: double.infinity,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Order ID",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 30.w,
-                ),
-                Container(
-                  width: 0.25.sw,
-                  height: double.infinity,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Date & Time",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           SizedBox(
-            height: 2.h,
+            height: 20.h,
           ),
           Container(
-            height: 520.h,
-            width: double.infinity,
-            child: StreamBuilder(
-              stream:
-                  FirebaseFirestore.instance.collection("allOrder").snapshots(),
-              builder: (context, snapshot) {
-                docList.clear();
-                loops.clear();
-                for (var i = 0; i < snapshot.data!.docs.length; i++) {
-                  docList.add(int.parse(snapshot.data!.docs[i].id));
-                }
-                docList.sort();
-                print("------------$loops");
-                for (var i = docList.length - 1; i >= 0; i--) {
-                  loops.add(docList[i]);
-                }
+              padding: EdgeInsets.all(20.sp),
+              width: double.infinity,
+              height: 0.58.sh,
+              child: StreamBuilder(
+                  stream: db.snapshots(),
+                  builder: (context, snapshot) {
+                    return GridView.builder(
+                        itemCount: snapshot.data!.size,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10.sp,
+                            mainAxisSpacing: 10.sp),
+                        itemBuilder: (context, index) {
+                          String dateString =
+                              snapshot.data!.docs[index]["date"];
+                          String date = snapshot.data!.docs[index]["date"];
+                          DateTime dateTime = DateTime.parse(dateString);
+                          String myDate =
+                              DateFormat('dd/MM/yyyy').format(dateTime);
+                          String myTime = DateFormat.jm().format(dateTime);
+                          if (myDate == formattedDate &&
+                              formattedDate != null) {
+                            if (itemSelected == "All") {
+                              return mybox(snapshot, myDate, myTime, index);
+                            }
 
-                print("------------$loops");
+                            if (itemSelected == "Not Read" &&
+                                snapshot.data!.docs[index]["readMass"] == "0") {
+                              return mybox(snapshot, myDate, myTime, index);
+                            }
+                          }
 
-                if (snapshot.hasError) {
-                  return Text("Error");
-                }
+                          if (formattedDate == null) {
+                            if (itemSelected == "All") {
+                              return mybox(snapshot, myDate, myTime, index);
+                            }
 
-                return ListView.builder(
-                  itemCount: loops.length,
-                  itemBuilder: (context, index) {
-                    for (var i = 0; i < loops.length; i++) {
-                      if (loops[index].toString() ==
-                          snapshot.data!.docs[i].reference.id) {
-                        String dateString = snapshot.data!.docs[i]["time"];
-                        String date = snapshot.data!.docs[i]["time"];
-                        DateTime dateTime = DateTime.parse(dateString);
+                            if (itemSelected == "Not Read" &&
+                                snapshot.data!.docs[index]["readMass"] == "0") {
+                              return mybox(snapshot, myDate, myTime, index);
+                            }
+                          }
 
-                        String myDate =
-                            DateFormat('dd/MM/yyyy').format(dateTime);
-                        String myTime = DateFormat.jm().format(dateTime);
-
-                        if (myDate == formattedDate && formattedDate != null) {
-                          if (itemSelected == "Pending" &&
-                              snapshot.data!.docs[i]["status"] == "1") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "Approved" &&
-                              snapshot.data!.docs[i]["status"] == "2") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "Reject" &&
-                              snapshot.data!.docs[i]["status"] == "3") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "Delivery" &&
-                              snapshot.data!.docs[i]["status"] == "4") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "All") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                        }
-                        if (formattedDate == null) {
-                          if (itemSelected == "Pending" &&
-                              snapshot.data!.docs[i]["status"] == "1") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "Approved" &&
-                              snapshot.data!.docs[i]["status"] == "2") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "Reject" &&
-                              snapshot.data!.docs[i]["status"] == "3") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "Delivery" &&
-                              snapshot.data!.docs[i]["status"] == "4") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                          if (itemSelected == "All") {
-                            return showData(snapshot, i, myDate, myTime, index);
-                          }
-                        }
-                      }
-                    }
-
-                    return SizedBox.shrink();
-                  },
-                );
-              },
-            ),
-          ),
+                          return SizedBox.shrink();
+                        });
+                  }))
         ],
       ),
       bottomNavigationBar: Container(
@@ -398,10 +289,6 @@ class _HomeState extends State<Home> {
               ),
             ),
             InkWell(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Franchise()));
-              },
               child: Column(
                 children: [
                   SvgPicture.asset(AppComponent.franchise),
@@ -431,81 +318,63 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget showData(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
-      int i, String myDate, String myTime, int index) {
+  Widget mybox(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+      String myDate, String myTime, int index) {
     return InkWell(
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OrderStatus(
-                orderId: snapshot.data!.docs[i]["orderId"],
-                dateTime: "$myDate $myTime",
-                number: snapshot.data!.docs[i]["number"],
-                status: snapshot.data!.docs[i]["status"],
+              builder: (context) => FranchisePartner(
+                orderId: snapshot.data!.docs[index].id,
+                dateTime: myDate + " " + myTime,
+                name: snapshot.data!.docs[index]["name"],
+                number: snapshot.data!.docs[index]["number"],
+                email: snapshot.data!.docs[index]["email"],
+                address: snapshot.data!.docs[index]["address"] +
+                    snapshot.data!.docs[index]["city"],
+                readMass: snapshot.data!.docs[index]["readMass"],
               ),
             ));
       },
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w),
-            width: double.infinity,
-            height: 55.h,
-            color: Color.fromARGB(255, 251, 250, 250),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 0.1.sw,
-                  height: double.infinity,
-                  child: Center(
-                    child: Text(
-                      "${loops.length - index}",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 30.w,
-                ),
-                Container(
-                  width: 0.2.sw,
-                  height: double.infinity,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      snapshot.data!.docs[i]["orderId"],
-                      style: TextStyle(
-                          color: AppComponent.Blue,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 30.w,
-                ),
-                Container(
-                  //width: 0.35.sw,
-                  height: double.infinity,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      myDate + "  " + myTime,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500, fontSize: 16.sp),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      child: Material(
+        elevation: 3,
+        child: Container(
+          padding: EdgeInsets.all(10.r),
+          decoration: BoxDecoration(
+              color: Color.fromARGB(255, 255, 255, 255),
+              borderRadius: BorderRadius.circular(8.r)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SvgPicture.asset(
+                AppComponent.user,
+                height: 40.h,
+              ),
+              SizedBox(
+                height: 5.h,
+              ),
+              Text(
+                snapshot.data!.docs[index]["name"],
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: AppComponent.Blue,
+                    fontSize: 18.sp),
+              ),
+              Text(
+                snapshot.data!.docs[index]["email"],
+                style: TextStyle(fontSize: 16.sp),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(
+                "$myDate| $myTime",
+                style: TextStyle(fontSize: 16.sp),
+              )
+            ],
           ),
-          SizedBox(
-            height: 3.sp,
-          )
-        ],
+        ),
       ),
     );
   }

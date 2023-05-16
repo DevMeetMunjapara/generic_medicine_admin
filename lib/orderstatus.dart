@@ -13,11 +13,13 @@ class OrderStatus extends StatefulWidget {
   String orderId;
   String dateTime;
   String number;
+  String status;
   OrderStatus({
     super.key,
     required this.orderId,
     required this.dateTime,
     required this.number,
+    required this.status,
   });
 
   @override
@@ -28,8 +30,8 @@ class _OrderStatusState extends State<OrderStatus> {
   List img = [];
   String? name;
   String? email;
-  String? statusCode;
   String? address;
+  String? cancelBy;
   @override
   void initState() {
     // TODO: implement initState
@@ -54,6 +56,7 @@ class _OrderStatusState extends State<OrderStatus> {
         .get()
         .then((value) {
       img = value["image"];
+      cancelBy = value["cancelBy"];
       setState(() {});
     });
   }
@@ -220,7 +223,9 @@ class _OrderStatusState extends State<OrderStatus> {
                 SizedBox(
                   height: 10.h,
                 ),
-                statusCode == "2"
+                widget.status == "2" ||
+                        widget.status == "3" ||
+                        widget.status == "4"
                     ? SizedBox.shrink()
                     : FullButton(
                         title: "Approved Order",
@@ -229,32 +234,182 @@ class _OrderStatusState extends State<OrderStatus> {
                               .collection("allOrder")
                               .doc(widget.orderId)
                               .set({"status": "2"}, SetOptions(merge: true));
+
+                          FirebaseFirestore.instance
+                              .collection("allUser")
+                              .doc("+91${widget.number}")
+                              .collection("order")
+                              .doc(widget.orderId)
+                              .set({"status": "2"}, SetOptions(merge: true));
+
+                          setState(() {
+                            widget.status = "2";
+                          });
                         },
                         mycolors: Color.fromARGB(255, 08, 97, 62)),
                 SizedBox(
                   height: 10.h,
                 ),
+                widget.status == "3" ||
+                        widget.status == "4" ||
+                        widget.status == "1"
+                    ? SizedBox.shrink()
+                    : SizedBox(
+                        width: double.infinity,
+                        height: 50.h,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: AppComponent.Blue,
+                                side: BorderSide(
+                                  color: AppComponent.Green,
+                                )),
+                            onPressed: () {
+                              FirebaseFirestore.instance
+                                  .collection("allOrder")
+                                  .doc(widget.orderId)
+                                  .set(
+                                      {"status": "4"}, SetOptions(merge: true));
+
+                              FirebaseFirestore.instance
+                                  .collection("allUser")
+                                  .doc("+91${widget.number}")
+                                  .collection("order")
+                                  .doc(widget.orderId)
+                                  .set(
+                                      {"status": "4"}, SetOptions(merge: true));
+                              setState(() {
+                                widget.status = "4";
+                              });
+                            },
+                            child: Text(
+                              "Delivery Completed",
+                              style: TextStyle(
+                                  color: AppComponent.White,
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.w400),
+                            )),
+                      ),
                 SizedBox(
-                  width: double.infinity,
-                  height: 50.h,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.white,
-                          side: BorderSide(
-                              color: Color.fromARGB(255, 156, 25, 21))),
-                      onPressed: () {},
-                      child: Text(
-                        "Reject Order",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 156, 25, 21),
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w400),
-                      )),
+                  height: 10.h,
                 ),
+                widget.status == "3" || widget.status == "4"
+                    ? SizedBox.shrink()
+                    : SizedBox(
+                        width: double.infinity,
+                        height: 50.h,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.white,
+                                side: BorderSide(
+                                    color: Color.fromARGB(255, 156, 25, 21))),
+                            onPressed: () {
+                              FirebaseFirestore.instance
+                                  .collection("allOrder")
+                                  .doc(widget.orderId)
+                                  .set({"status": "3", "cancelBy": "By Me"},
+                                      SetOptions(merge: true));
+
+                              FirebaseFirestore.instance
+                                  .collection("allUser")
+                                  .doc("+91${widget.number}")
+                                  .collection("order")
+                                  .doc(widget.orderId)
+                                  .set({"status": "3", "cancelBy": "By Me"},
+                                      SetOptions(merge: true));
+                              setState(() {
+                                widget.status = "3";
+                                cancelBy = "By Me";
+                              });
+                            },
+                            child: Text(
+                              "Reject Order",
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 156, 25, 21),
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.w400),
+                            )),
+                      ),
               ],
             ),
           ),
+          SizedBox(
+            height: 10.sp,
+          ),
+          widget.status == "3"
+              ? Container(
+                  padding: EdgeInsets.only(
+                      left: 20.sp, right: 20.sp, top: 20.sp, bottom: 20.sp),
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        AppComponent.cancel,
+                      ),
+                      SizedBox(
+                        width: 20.w,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Order Status",
+                            style: TextStyle(
+                                fontSize: 22.sp,
+                                color: AppComponent.Blue,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            "Cancel Order by $cancelBy",
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              color: Color.fromARGB(255, 156, 25, 21),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              : widget.status == "4"
+                  ? Container(
+                      padding: EdgeInsets.only(
+                          left: 20.sp, right: 20.sp, top: 20.sp, bottom: 20.sp),
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            AppComponent.successfully,
+                          ),
+                          SizedBox(
+                            width: 20.w,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Order Status",
+                                style: TextStyle(
+                                    fontSize: 22.sp,
+                                    color: AppComponent.Blue,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                "Delivery Successfully Completed",
+                                style: TextStyle(
+                                  fontSize: 20.sp,
+                                  color: Color.fromARGB(255, 21, 156, 55),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                  : SizedBox.shrink()
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:generic_medicine_admin/CustomWidget/AppComponent.dart';
 import 'package:generic_medicine_admin/Login.dart';
+import 'package:generic_medicine_admin/home.dart';
 
 class Logo extends StatefulWidget {
   const Logo({super.key});
@@ -24,8 +26,22 @@ class _LogoState extends State<Logo> {
 
   timerScreen() async {
     await Future.delayed(Duration(seconds: 2), () async {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      var user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Login(),
+            ),
+            (route) => false);
+      } else {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(),
+            ),
+            (route) => false);
+      }
     });
   }
 

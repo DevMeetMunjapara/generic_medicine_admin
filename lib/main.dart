@@ -12,7 +12,7 @@ import 'package:generic_medicine_admin/orderstatus.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             // scaffoldBackgroundColor: AppComponent.White,
             fontFamily: "DMSans",
           ),
-          routes: {"/": (context) => Home()},
+          routes: {"/": (context) => Logo()},
         );
       },
     );

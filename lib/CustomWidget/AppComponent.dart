@@ -19,4 +19,8 @@ class AppComponent {
   static String left = "img/left.svg";
   static String right = "img/right.svg";
   static String user = "img/user.svg";
+  static String cancel = "img/cancel.svg";
+  static String successfully = "img/successfully.svg";
+  static String orderStatus = "img/orderStatus.svg";
+  static String franchise = "img/franchise.svg";
 }

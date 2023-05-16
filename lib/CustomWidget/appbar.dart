@@ -8,6 +8,7 @@ import 'package:generic_medicine_admin/CustomWidget/AppComponent.dart';
 class MyAppBar {
   AppBar myappwithLogo(BuildContext context) {
     return AppBar(
+      elevation: 0,
       toolbarHeight: 100.h,
       backgroundColor: Colors.white,
       automaticallyImplyLeading: false,
